@@ -22,7 +22,7 @@ public class MovementControler : MonoBehaviour
         mainCameraTransform = Camera.main.transform;
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
         Move();
     }
