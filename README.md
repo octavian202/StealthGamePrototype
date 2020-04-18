@@ -1,2 +1,2 @@
 # StealthGamePrototype
-Game Stelth Prototype ps nici nu stim ce facem
+Game Stealth Prototype ps nici nu stim ce facem
