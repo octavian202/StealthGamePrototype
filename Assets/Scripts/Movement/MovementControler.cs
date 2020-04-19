@@ -8,7 +8,8 @@ public class MovementControler : MonoBehaviour
     private float currentSpeed = 0f;
     private float speedSmoothVelocity = 0f;
     private float speedSmoothTime = 0.1f;
-    private float rotationSpeed = 0.1f;
+    private float rotationSpeedX = 0.01f;
+    private float rotationSpeedY = 0.1f;
     private float gravity = 3f;
 
     private Transform mainCameraTransform;
@@ -40,7 +41,9 @@ public class MovementControler : MonoBehaviour
         forward.Normalize();
         right.Normalize();
 
-        Vector3 desiredMoveDirection = (forward * movementInput.y + right * movementInput.x).normalized;
+        Vector3 desiredMoveDirection = (right * movementInput.x + forward * movementInput.y).normalized;
+        Vector3 desiredMoveDirectionX = (right * movementInput.x).normalized;
+        Vector3 desiredMoveDirectionY = (forward * movementInput.y).normalized;
         Vector3 gravityVector = Vector3.zero;
 
         if (!controller.isGrounded)
@@ -48,9 +51,13 @@ public class MovementControler : MonoBehaviour
             gravityVector.y -= gravity;
         }
 
-        if (desiredMoveDirection != Vector3.zero)
+        if (desiredMoveDirectionX != Vector3.zero)
         {
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(desiredMoveDirection), rotationSpeed);
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(desiredMoveDirectionX), rotationSpeedX);
+        }
+        if (desiredMoveDirectionY != Vector3.zero)
+        {
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(desiredMoveDirectionY), rotationSpeedY);
         }
 
         float targetSpeed = movementSpeed * movementInput.magnitude;
