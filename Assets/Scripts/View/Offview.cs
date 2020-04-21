@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Cinemachine;
 
 public class Offview : MonoBehaviour
 {
@@ -8,6 +9,8 @@ public class Offview : MonoBehaviour
     public float moveSpeed;
     public float height;
     public float front;
+
+    public CinemachineFreeLook freeLookCam;
 
    
 
@@ -32,6 +35,8 @@ public class Offview : MonoBehaviour
 
         Vector3 endPos = playerBody.position + ofX * right + height * up + front * forward;
         transform.position = Vector3.Lerp(transform.position, endPos, moveSpeed);
+
+        //freeLookCam.m_XAxis.Value = 
 
     }
 }
