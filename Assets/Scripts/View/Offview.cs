@@ -4,21 +4,21 @@ using Cinemachine;
 public class Offview : MonoBehaviour
 {
     public Transform playerBody;
-    public Transform objLookingAt;
-    public float ofX;
-    public float moveSpeed;
-    public float height;
-    public float front;
-
     public CinemachineFreeLook freeLookCam;
 
-   
+    private float ofX = 2.5f;
+    private float moveSpeed = 0.3f;
+    private float height = 0.1f;
+    private float front = 2f;
+    private float camFix = -35f;
 
     private void Update()
     {
         if (Input.GetKeyDown("v"))
         {
+            camFix = -camFix;
             ofX = -ofX;
+            freeLookCam.m_XAxis.Value += camFix;
         }
 
 
@@ -36,7 +36,7 @@ public class Offview : MonoBehaviour
         Vector3 endPos = playerBody.position + ofX * right + height * up + front * forward;
         transform.position = Vector3.Lerp(transform.position, endPos, moveSpeed);
 
-        //freeLookCam.m_XAxis.Value = 
+        
 
     }
 }
