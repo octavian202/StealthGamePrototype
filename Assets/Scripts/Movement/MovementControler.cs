@@ -12,6 +12,10 @@ public class MovementControler : MonoBehaviour
     private float rotationSpeedY = 0.1f;
     private float gravity = 3f;
 
+    private bool isCrouched = false;
+    private float ind = 1f;
+    public bool isRunning = false;
+
     private Transform mainCameraTransform;
 
     private CharacterController controller;
@@ -30,6 +34,22 @@ public class MovementControler : MonoBehaviour
 
     private void Move()
     {
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            isCrouched = !isCrouched;
+        }
+
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            isRunning = true;
+        } else
+        {
+            isRunning = false;
+        }
+
+        Crouch();
+        Sprint();
+
         Vector2 movementInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
 
         Vector3 forward = mainCameraTransform.forward;
@@ -63,7 +83,33 @@ public class MovementControler : MonoBehaviour
         float targetSpeed = movementSpeed * movementInput.magnitude;
         currentSpeed = Mathf.SmoothDamp(currentSpeed, targetSpeed, ref speedSmoothVelocity, speedSmoothTime);
 
-        controller.Move(desiredMoveDirection * movementSpeed * Time.deltaTime);
+        controller.Move(desiredMoveDirection * movementSpeed * ind * Time.deltaTime);
         controller.Move(gravityVector * Time.deltaTime);
+    }
+
+    void Crouch()
+    {
+        if (isRunning && isCrouched)
+        {
+            isRunning = false;
+        }
+
+        if (isCrouched)
+        {
+            ind = 0.5f;
+        }
+        else
+        {
+            ind = 1f;
+        }
+        transform.localScale = new Vector3(1f, ind, 1f);
+    }
+
+    void Sprint()
+    {
+        if (isRunning)
+        {
+            ind = 2f;
+        }
     }
 }
