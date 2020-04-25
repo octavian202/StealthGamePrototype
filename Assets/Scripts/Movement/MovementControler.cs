@@ -10,7 +10,7 @@ public class MovementControler : MonoBehaviour
     private float speedSmoothTime = 0.1f;
     private float rotationSpeedX = 0.01f;
     private float rotationSpeedY = 0.1f;
-    private float gravity = 3f;
+    private float gravity = 18f;
 
     private bool isCrouched = false;
     private float ind = 1f;
