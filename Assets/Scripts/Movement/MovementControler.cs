@@ -7,6 +7,7 @@ public class MovementControler : MonoBehaviour
     private float speedSmoothVelocity = 0.5f;
     private float speedSmoothTime = 0.1f;
 
+
     #region rotation speed
     [Header("Rotation speed")]
     [SerializeField] private float rotationSpeedX = 0.01f;
@@ -14,6 +15,7 @@ public class MovementControler : MonoBehaviour
     #endregion
 
     private float gravity = 3f;
+
 
     #region other moves
     private bool isCrouched = false;
