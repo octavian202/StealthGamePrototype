@@ -6,19 +6,16 @@ public class Offview : MonoBehaviour
     public Transform playerBody;
     public CinemachineFreeLook freeLookCam;
 
-    #region walking variables
-    [SerializeField] private float ofX = 2.5f;
-    [SerializeField] private float moveSpeed = 0.125f;
-    [SerializeField] private float height = 0.1f;
-    [SerializeField] private float front = 2f;
-    #endregion
-
+    private float ofX = 2.5f;
+    private float moveSpeed = 0.125f;
+    private float height = 0.1f;
+    private float front = 2f;
     private float camFix = -35f;
     private Vector3 endPos;
+    private float sprintHeight = 1.5f;
 
-    [SerializeField] private float sprintHeight = 1.5f;
+    private bool sprint = false;
 
-    private bool isRunning;
     private MovementControler movementcontroler;
 
     private void Start()
@@ -28,14 +25,16 @@ public class Offview : MonoBehaviour
 
     private void Update()
     {
-        isRunning = movementcontroler.isRunning; //verifica daca fuge
+        sprint = movementcontroler.isRunning;
 
-        Vector3 up = new Vector3(0f, 1f, 0f); // folosit pt ridicarea camerei
+        Vector3 up = new Vector3(0f, 1f, 0f);
 
-        if (isRunning) endPos = playerBody.position + sprintHeight * up; // muta camera pe player cand fuge
-        else
+        if (sprint)
         {
-            if (Input.GetKeyDown("v")) // daca apasa V se schimba partea de pe care vede pe mr bean
+            endPos = playerBody.position + sprintHeight * up;
+        } else
+        {
+            if (Input.GetKeyDown("v"))
             {
                 camFix = -camFix;
                 ofX = -ofX;
@@ -44,20 +43,17 @@ public class Offview : MonoBehaviour
 
             Vector3 forward = playerBody.forward;
             Vector3 right = playerBody.right;
-            //directiile
 
-            forward.y = 0f;
+            forward.y = 0;
             right.y = 0f;
-            // nu in sus
 
             forward.Normalize();
             right.Normalize();
-            // il face vector cu magnitudinea 1
 
-            endPos = playerBody.position + ofX * right + height * up + front * forward; // pozitia de langa mr bean
+            endPos = playerBody.position + ofX * right + height * up + front * forward;
         }
 
-        transform.position = Vector3.Lerp(transform.position, endPos, moveSpeed); // se duce pe poz langa mr bean
+        transform.position = Vector3.Lerp(transform.position, endPos, moveSpeed);
 
     }
 }
