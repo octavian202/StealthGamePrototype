@@ -10,6 +10,7 @@ public class GuardController : MonoBehaviour
     public Camera cam;
     public NavMeshAgent agent;
 
+
     void Start()
     {
     	agent.autoBraking = false;
@@ -37,7 +38,12 @@ public class GuardController : MonoBehaviour
         		agent.SetDestination(hit.point);
         }*/
 
-        if(!agent.pathPending && agent.remainingDistance < 0.5f)
-        	GoToNextPoint();
+        if (!agent.pathPending && agent.remainingDistance < 0.5f)
+            GoToNextPoint();
+
+        if (patrol == true)
+        {
+
+        }
     }
 }
