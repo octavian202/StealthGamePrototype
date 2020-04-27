@@ -41,9 +41,9 @@ public class GuardController : MonoBehaviour
         if (!agent.pathPending && agent.remainingDistance < 0.5f)
             GoToNextPoint();
 
-        if (patrol == true)
-        {
+        //if (patrol == true)
+        //{
 
-        }
+    //    }
     }
 }
