@@ -8,7 +8,7 @@ namespace Movement
         public float movementSpeed = 7f;
         private float currentSpeed = 0f;
         private float speedSmoothVelocity = 0.5f;
-        private float speedSmoothTime = 0.1f;
+        private readonly float speedSmoothTime = 0.1f;
 
         #region rotation speed
 
@@ -32,15 +32,6 @@ namespace Movement
         
         #endregion
 
-        #region Vault
-
-        public float _originOffset = 0.1f;
-        public float _vaultableDistance = 10f;
-        public float _maxVaultHeight;
-        public RaycastHit hit;
-        
-        #endregion
-
         private Transform mainCameraTransform;
         private CharacterController controller;
 
@@ -49,6 +40,8 @@ namespace Movement
             controller = GetComponent<CharacterController>();
             mainCameraTransform = Camera.main.transform;
         }
+
+        #region Implementarea functiilor
 
         private void ToMove()
         {
@@ -68,16 +61,11 @@ namespace Movement
             if (Input.GetKeyUp(KeyCode.LeftShift)) StopSprint();
         }
 
-        private void ToVault()
-        {
-            if (!CanVault()) return;
-        }
+        #endregion
 
         private void Update()
         {
             GetInput();
-            
-            ToVault();
 
             if (Input.GetKeyDown(KeyCode.C)) ToCrouch();
             
@@ -119,8 +107,8 @@ namespace Movement
 
         private void PlayerRotate()
         {
-            Vector3 desiredMoveDirectionX = (right * _movementInput.x).normalized;
-            Vector3 desiredMoveDirectionY = (forward * _movementInput.y).normalized;
+            var desiredMoveDirectionX = (right * _movementInput.x).normalized;
+            var desiredMoveDirectionY = (forward * _movementInput.y).normalized;
             
             if (desiredMoveDirectionX != Vector3.zero)
             {
@@ -144,8 +132,8 @@ namespace Movement
 
         private void Move()
         {
-            Vector3 desiredMoveDirection = (right * _movementInput.x + forward * _movementInput.y).normalized;
-            float targetSpeed = movementSpeed * _movementInput.magnitude;
+            var desiredMoveDirection = (right * _movementInput.x + forward * _movementInput.y).normalized;
+            var targetSpeed = movementSpeed * _movementInput.magnitude;
             currentSpeed = Mathf.SmoothDamp(currentSpeed, targetSpeed, ref speedSmoothVelocity, speedSmoothTime);
 
             controller.Move(currentSpeed * _ind * Time.deltaTime * desiredMoveDirection);
@@ -184,28 +172,5 @@ namespace Movement
 
         #endregion
 
-        #region Vault
-
-        public bool CanVault()
-        {
-            Vector3 origin = transform.position;
-            Vector3 direction = transform.forward;
-            
-            origin.y -= _originOffset;
-
-            Debug.DrawRay(origin, direction * _vaultableDistance, Color.black);
-            if (!Physics.Raycast(origin, direction, out hit, _vaultableDistance)) return false;
-
-            Vector3 origin2 = origin;
-            origin2.y += _maxVaultHeight;
-
-            Debug.DrawRay(origin2, direction * _vaultableDistance, Color.black);
-            if (Physics.Raycast(origin2, direction, out hit, _vaultableDistance)) return false;
-
-            return true;
-        }
-
-        #endregion
-        
     }
 }
