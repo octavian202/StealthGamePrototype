@@ -1,4 +1,9 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections;
+using System.Runtime.CompilerServices;
+using TMPro;
+using UnityEditor.UIElements;
+using UnityEngine;
 
 namespace Movement
 {
@@ -10,7 +15,7 @@ namespace Movement
         private float speedSmoothVelocity = 0.5f;
         private readonly float speedSmoothTime = 0.1f;
 
-        #region rotation speed
+        #region Rotation Speed
 
         private float rotationSpeedX = 0.01f;
         private float rotationSpeedY = 0.01f;
@@ -23,13 +28,27 @@ namespace Movement
         private Vector3 forward;
         private Vector3 right;
 
-        #region Other moves
+        #region Other Moves
 
         private bool isCrouched = false;
         public bool isRunning = false;
         private bool isVaulting = false;
         
         
+        #endregion
+
+        #region Vault
+
+        private float _originOffset = 0.2f;
+        private float _vaultMaxHeight = 0.6f;
+        private float _lookDownDistance = 3f;
+        private float _vaultableDistance = 2f;
+
+        private float _vaultSpeed = 0.06f;
+        
+        private Vector3 _endPosition;
+        private RaycastHit hit;
+
         #endregion
 
         private Transform mainCameraTransform;
@@ -43,6 +62,12 @@ namespace Movement
 
         #region Implementarea functiilor
 
+        private void ToVault()
+        {
+            if (!Input.GetKeyDown(KeyCode.Space)) return;
+            StartCoroutine(Vault());
+        }
+        
         private void ToMove()
         {
             if (isVaulting) return;
@@ -66,6 +91,8 @@ namespace Movement
         private void Update()
         {
             GetInput();
+            
+            if (CanVault()) ToVault();
 
             if (Input.GetKeyDown(KeyCode.C)) ToCrouch();
             
@@ -75,10 +102,23 @@ namespace Movement
                 ToRun();
             }
             else if (isRunning) StopSprint();
+            
+            if (!isVaulting) GravityActionOnPlayer();
         }
 
+        #region Gravity
+
+        private void GravityActionOnPlayer()
+        {
+            var gravityVector = Vector3.zero;
+            if (!controller.isGrounded) gravityVector.y -= _gravity;
+            controller.Move(gravityVector * Time.deltaTime);
+        }
+
+        #endregion
+        
         #region Input
-        private Vector2 GetInput() => _movementInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+        private void GetInput() => _movementInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
         #endregion
         
         #region NormalMove
@@ -89,8 +129,6 @@ namespace Movement
             PlayerRotate();
             
             Move();
-
-            GravityActionOnPlayer();
         }
         
         private void CameraDirections()
@@ -121,13 +159,6 @@ namespace Movement
                 transform.rotation = Quaternion.Slerp(transform.rotation,
                     Quaternion.LookRotation(desiredMoveDirectionY), rotationSpeedY);
             }
-        }
-
-        private void GravityActionOnPlayer()
-        {
-            Vector3 gravityVector = Vector3.zero;
-            if (!controller.isGrounded) gravityVector.y -= _gravity;
-            controller.Move(gravityVector * Time.deltaTime);
         }
 
         private void Move()
@@ -172,5 +203,50 @@ namespace Movement
 
         #endregion
 
+        #region Vault
+
+        private bool CanVault()
+        {
+            var origin = transform.position;
+            var direction = transform.forward;
+
+            origin.y -= _originOffset;
+
+            Debug.DrawRay(origin, direction * _vaultableDistance);
+            if (!Physics.Raycast(origin, direction, out hit, _vaultableDistance)) return false;
+
+            var origin2 = origin;
+            origin2.y += _vaultMaxHeight;
+
+            Debug.DrawRay(origin2, direction * _vaultableDistance);
+            if (Physics.Raycast(origin2, direction, out hit, _vaultableDistance)) return false;
+            
+            var origin3 = origin2 + (direction * _vaultableDistance);
+            
+            Debug.DrawRay(origin3, -Vector3.up * _lookDownDistance);
+            Physics.Raycast(origin3, -Vector3.up, out hit, _lookDownDistance);
+
+            return true;
+        }
+
+        private IEnumerator Vault()
+        {
+            _endPosition = hit.point;
+            _endPosition += (Vector3.up);
+            
+            isVaulting = true;
+
+            while (transform.position != _endPosition)
+            {
+                var targetPosition = Vector3.Lerp(transform.position, _endPosition, _vaultSpeed);
+                transform.position = targetPosition;
+                yield return null;
+            }
+
+            isVaulting = false;
+            yield break;
+        }
+
+        #endregion
     }
 }
