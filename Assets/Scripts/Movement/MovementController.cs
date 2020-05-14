@@ -44,7 +44,7 @@ namespace Movement
         private float _lookDownDistance = 3f;
         private float _vaultableDistance = 2f;
 
-        private float _vaultSpeed = 0.06f;
+        private float vaultSpeed = 0.06f;
         
         private Vector3 _endPosition;
         private RaycastHit hit;
@@ -238,7 +238,7 @@ namespace Movement
 
             while (transform.position != _endPosition)
             {
-                var targetPosition = Vector3.Lerp(transform.position, _endPosition, _vaultSpeed);
+                var targetPosition = Vector3.Lerp(transform.position, _endPosition, vaultSpeed);
                 transform.position = targetPosition;
                 yield return null;
             }
