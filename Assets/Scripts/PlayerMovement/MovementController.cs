@@ -33,8 +33,7 @@ namespace Movement
         private bool isCrouched = false;
         public bool isRunning = false;
         private bool isVaulting = false;
-        
-        
+
         #endregion
 
         #region Vault
